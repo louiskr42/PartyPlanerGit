@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/aufgabenTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/aufgaben"
+        android:theme="@style/TextStyleMainMenu" />
+
+    <TextView
+        android:id="@+id/guesteListeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gaesteliste"
+        android:theme="@style/TextStyleMainMenu"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/aufgabenTextView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/kalenderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/kalender"
+        android:theme="@style/TextStyleMainMenu"
+        android:layout_below="@+id/guesteListeTextView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/einkaufsListeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/einkaufsliste"
+        android:theme="@style/TextStyleMainMenu"
+        android:layout_below="@+id/kalenderTextView"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

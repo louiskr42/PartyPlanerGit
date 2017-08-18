@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/aufgabenEditText"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/colorWhite"
+        android:theme="@style/EditText"
+        android:textColorHint="@color/colorWhite"/>
+
+    <ListView
+        android:id="@+id/aufgabenListView"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/aufgabenEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="115dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp"
+        android:theme="@style/TextStyleAufgabenListViewMain"/>
+
+    <Button
+        android:id="@+id/deleteAllButton"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/gaeste_loeschen"
+        android:layout_below="@+id/aufgabenEditText"
+        android:layout_alignStart="@+id/aufgabenListView"/>
+
+    <TextView
+        android:id="@+id/aufgabenTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:text="@string/gib_namen_der_aufgabe"
+        android:textColor="@color/colorWhite"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textAlignment="center"/>
+
+    <Button
+        android:id="@+id/deleteSingleButton"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:text="@string/namen_loeschen"
+        android:layout_alignTop="@+id/deleteAllButton"
+        android:layout_alignEnd="@+id/aufgabenListView" />
+
+    <TextView
+        android:id="@+id/vielleichtTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/aufgabenListView"
+        android:layout_below="@+id/deleteAllButton"
+        android:text="vielleicht"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/jaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zusagen"
+        android:layout_below="@+id/deleteAllButton"
+        android:layout_alignEnd="@+id/deleteAllButton"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/neinTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deleteSingleButton"
+        android:text="Absagen"
+        android:layout_alignStart="@+id/deleteSingleButton"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/neutralTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/deleteSingleButton"
+        android:layout_below="@+id/deleteSingleButton"
+        android:text="neutral"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"/>
+
+</RelativeLayout>
