@@ -283,7 +283,6 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
             }else if (item.contains("|Vielleicht|")) {
                 guestList.set(position, item.replace("|Vielleicht|", "|Ja|"));
                 adapter.notifyDataSetChanged();
-                //lol test git
             }else if (item.contains("|Ja|")) {
                 guestList.set(position, item.replace("|Ja|", "|Nein|"));
                 adapter.notifyDataSetChanged();
