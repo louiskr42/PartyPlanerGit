@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,10 +24,15 @@ public class Kalender extends AppCompatActivity {
     CompactCalendarView calendar;
     private SimpleDateFormat dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
+    ArrayList<Event>    eventList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_kalender);
+
+        eventList = new ArrayList<>();
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
@@ -36,19 +42,30 @@ public class Kalender extends AppCompatActivity {
         calendar.setUseThreeLetterAbbreviation(true);
 
         //set an event
-        Event ev1 = new Event(Color.RED, 1503403200000L, "Test-Event");
+        final Event ev1 = new Event(Color.RED, 1503352800000L, "Neues Event");
         calendar.addEvent(ev1);
+        eventList.add(ev1);
 
         calendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
                 Context context = getApplicationContext();
 
-                if (dateClicked.toString() == "Tue Aug 22 12:00:00  GMT 2017") {
-                    Toast.makeText(context, "Test Event", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(context, "Nicht Test Event", Toast.LENGTH_SHORT).show();
-                }
+                final Event newEvent = new Event(Color.RED, dateClicked.getTime(), "Neues Event");
+
+                /*if (dateClicked.getDate() == 1503403200000L){
+                    Toast.makeText(context, "Heurekah", Toast.LENGTH_SHORT).show();
+                }else {
+                    Event newEvent = new Event(Color.RED, dateClicked.getTime(), "Blocked");
+                    calendar.addEvent(newEvent);
+                }*/
+
+                    if (newEvent.getTimeInMillis() == ev1.getTimeInMillis()) {
+                        Toast.makeText(context, "Test Event", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Nicht Test Event", Toast.LENGTH_SHORT).show();
+                    }
+
             }
 
             @Override
