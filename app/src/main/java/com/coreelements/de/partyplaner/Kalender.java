@@ -64,6 +64,8 @@ public class Kalender extends AppCompatActivity {
                         Toast.makeText(context, "Test Event", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "Nicht Test Event", Toast.LENGTH_SHORT).show();
+                        Event newEvent2 = new Event(Color.RED, dateClicked.getTime(), "Blocked");
+                        calendar.addEvent(newEvent2);
                     }
 
             }
