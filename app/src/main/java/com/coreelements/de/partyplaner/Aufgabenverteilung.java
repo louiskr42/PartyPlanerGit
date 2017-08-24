@@ -213,6 +213,7 @@ public class Aufgabenverteilung extends AppCompatActivity implements View.OnKeyL
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
         }
 
         //speichert die HashMap über den ObjectOutputStream in file

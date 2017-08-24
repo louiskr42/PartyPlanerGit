@@ -27,5 +27,8 @@
     <string name="artikel_loeschen2">wirklich von der Einkaufsliste streichen?</string>
     <string name="alle_artikel_loeschen">Alle Artikel löschen</string>
     <string name="gib_artikel">Namen des Artikels eingeben</string>
+    <string name="set_blockedEvent">Datum wurde als blockiert markiert!</string>
+    <string name="set_freeEvent">Datum wurde als verfügbar markiert!</string>
+    <string name="cleared_event">Markierung wurde aufgehoben!</string>
 
 </resources>

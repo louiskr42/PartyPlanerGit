@@ -24,7 +24,8 @@
         <activity android:name=".Aufgabenverteilung" />
         <activity android:name=".ToDosList" />
         <activity android:name=".GaesteListe" />
-        <activity android:name=".Kalender" />
+        <activity android:name=".Kalender"
+                    android:screenOrientation="portrait"/>
         <activity android:name=".Einkaufsliste"></activity>
     </application>
 

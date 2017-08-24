@@ -177,6 +177,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
         }
 
         //speichert die Liste über den ObjectOutputStream in file
