@@ -104,7 +104,11 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     }
 
     public void sortList(String aufgabe, String person){
-        listItems.add(aufgabe.replace("\n", "") + "\n" + "("+ person.replace("\n", "") + ")");
+        if (person.length() > 0) {
+            listItems.add(aufgabe.replace("\n", "") + "\n" + "(" + person.replace("\n", "") + ")");
+        }else{
+            listItems.add(aufgabe.replace("\n", ""));
+        }
         aufgabenPersonenAdapter.notifyDataSetChanged();
         aufgabenLV.setAdapter(aufgabenPersonenAdapter);
         aufgabenET.setText(null);
@@ -153,8 +157,34 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
                         //addiert 1 zu i, damit die nächste Eingabe den Details zugeordnet wird
                     }
                 } else {
-                    Toast t = Toast.makeText(getApplicationContext(), getString(R.string.gib_etwas_ein), Toast.LENGTH_LONG);
-                    t.show();
+
+                    if (i == 1) {
+                        Toast t = Toast.makeText(getApplicationContext(), getString(R.string.gib_etwas_ein), Toast.LENGTH_LONG);
+                        t.show();
+                    }else{
+                        String text = aufgabenET.getText().toString().replace("\n", "").replace("  ", "");
+                        subPrefEditor.putString("personen", text);
+                        subPrefEditor.commit();
+                        aufgabenET.setText(null);
+                        //speichert die Details der Aufgabe in den SharedPreferences
+
+                        String aufgabe = mainPref.getString("aufgaben", "");
+                        String person = subPref.getString("personen", "");
+                        sortList(aufgabe, person);
+                        //leitet die eingegebenen Information an sortList weiter
+
+                        mainPrefEditor.clear();
+                        mainPrefEditor.commit();
+
+                        subPrefEditor.clear();
+                        subPrefEditor.commit();
+                        //löscht die SharedPreferences
+
+                        aufgabenTV.setText(getString(R.string.gib_namen_der_aufgabe));
+
+                        i = 1;
+                        //setzt i auf 1, damit die nächste Eingabe den Namen zugeordnet wird
+                    }
                 }
             }
             aufgabenET.setText("".replace("\n", ""));
