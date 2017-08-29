@@ -3,21 +3,21 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorGreyMain</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorGreyAccent</item>
         <item name="colorAccent">@color/colorGreyAccent</item>
-        <item name="android:colorBackground">@color/colorGreyMain</item>
+        <item name="android:colorBackground">@color/colorPrimaryDark</item>
     </style>
 
     <style name="TextStyleMainMenu">
         <item name="android:textSize">30dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorWhiteTransparent</item>
     </style>
 
     <style name="TextStyleAufgabenListViewMain">
         <item name="android:textSize">25dp</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorWhiteTransparent</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -29,7 +29,7 @@
     <style name="EditText">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">50dp</item>
-        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textColor">@color/colorWhiteTransparent</item>
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginRight">10dp</item>
     </style>

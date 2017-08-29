@@ -47,7 +47,7 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_kalender);
+        setContentView(R.layout.layout_kalender_constraint);
 
         blockBTN = (Button)findViewById(R.id.blockButton);
         blockBTN.setOnClickListener(this);

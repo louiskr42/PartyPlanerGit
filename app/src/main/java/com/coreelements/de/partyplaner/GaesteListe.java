@@ -221,7 +221,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
             deleteMode = false;
             aufgabenTV.setText(getString(R.string.gib_namen_gast));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                aufgabenTV.setTextColor(getColor(R.color.colorWhite));
+                aufgabenTV.setTextColor(getColor(R.color.colorWhiteTransparent));
             }
             deleteSingleBTN.setText(getString(R.string.namen_loeschen));
             editET.setClickable(true);
