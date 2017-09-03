@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.coreelements.de.partyplaner">
+          package="com.coreelements.de.partyplaner">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE"/>
+
+    <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher_test"
+        android:icon="@mipmap/ic_launcher_preversion"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainMenu">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Aufgabenverteilung" />
-        <activity android:name=".ToDosList" />
-        <activity android:name=".GaesteListe" />
-        <activity android:name=".Kalender"
-                    android:screenOrientation="portrait"/>
-        <activity android:name=".Einkaufsliste"></activity>
+        <activity android:name=".Aufgabenverteilung"/>
+        <activity android:name=".ToDosList"/>
+        <activity android:name=".GaesteListe"/>
+        <activity android:name=".Kalender"/>
+        <activity android:name=".Einkaufsliste"/>
+        <activity android:name=".Abstimmungen">
+        </activity>
     </application>
-
-    <!--android:roundIcon="@mipmap/ic_launcher_round"-->
 
 </manifest>

@@ -50,8 +50,8 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="32dp"
                 android:background="@color/colorWhite"
-                android:textColor="@android:color/holo_red_light"
                 android:text="Datum als Nicht-Verfügbar markieren"
+                android:textColor="@color/gaestListRed"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/compactcalendar_view" />
@@ -67,8 +67,8 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/colorWhite"
-                android:textColor="@android:color/holo_green_light"
                 android:text="Datum als Verfügbar markieren"
+                android:textColor="@color/gaestListGreen"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/blockButton" />
@@ -83,11 +83,25 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
                 android:background="@color/colorWhite"
-                android:textColor="@color/colorPrimary"
                 android:text="Markierung aufheben"
+                android:textColor="@color/colorLightBlue700"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/freeButton" />
+                app:layout_constraintTop_toBottomOf="@+id/freeButton"/>
+
+            <Button
+                android:id="@+id/clearAllButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorWhite"
+                android:text="Alle Markierungen aufheben"
+                android:textColor="@color/colorLightBlue700"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clearButton"/>
 
         </LinearLayout>
     </ScrollView>

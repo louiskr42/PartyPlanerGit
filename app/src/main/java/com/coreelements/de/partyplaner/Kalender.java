@@ -1,6 +1,8 @@
 package com.coreelements.de.partyplaner;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -37,7 +39,7 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     Event                           selectedEvent;
 
-    Button                          blockBTN, freeBTN, clearBTN;
+    Button                          blockBTN, freeBTN, clearBTN, clearAllBTN;
 
     ObjectInputStream               blockedInputStream, freeInputStream;
 
@@ -57,6 +59,9 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
         clearBTN = (Button)findViewById(R.id.clearButton);
         clearBTN.setOnClickListener(this);
+
+        clearAllBTN = (Button)findViewById(R.id.clearAllButton);
+        clearAllBTN.setOnClickListener(this);
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
@@ -121,29 +126,6 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
                 selectedEvent = new Event(Color.BLUE, dateClicked.getTime(), "Ausgewähltes Event");
 
-                    /*if (blockedEventList.contains(selectedEvent.getTimeInMillis())) {
-
-                        if (calendar.getEvents(selectedEvent.getTimeInMillis()).contains(blockedEvent)) {
-
-                            Toast.makeText(context, "Test Event", Toast.LENGTH_SHORT).show();
-                            calendar.getEvents(selectedEvent.getTimeInMillis()).clear();
-                            final Event freeEvent = new Event(Color.GREEN, dateClicked.getTime(), "Freies Event");
-                            calendar.addEvent(freeEvent);
-
-                        }else{
-
-                            calendar.getEvents(selectedEvent.getTimeInMillis()).clear();
-                        }
-
-                    } else {
-
-                        Toast.makeText(context, "Nicht Test Event", Toast.LENGTH_SHORT).show();
-                        blockedEvent = new Event(Color.RED, dateClicked.getTime(), "Blocked");
-                        calendar.addEvent(blockedEvent);
-                        blockedEventList.add(blockedEvent.getTimeInMillis());
-
-                    }*/
-
             }
 
             @Override
@@ -173,7 +155,7 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
             time = selectedEvent.getTimeInMillis();
         }else{
 
-            Toast.makeText(getApplicationContext(), "Bitte wähle ein Datum aus!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.choose_date, Toast.LENGTH_LONG).show();
             time = 0000000000000L;
         }
 
@@ -211,6 +193,29 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
             Toast.makeText(getApplicationContext(), getString(R.string.cleared_event), Toast.LENGTH_LONG).show();
 
+        }else if (v.getId() == R.id.clearAllButton){
+
+            AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
+            mainbuilder.setMessage(R.string.alles_aufheben);
+            mainbuilder.setCancelable(true);
+
+            mainbuilder.setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    calendar.removeAllEvents();
+                    blockedEventList.clear();
+                    freeEventList.clear();
+
+                    Toast.makeText(getApplicationContext(), getString(R.string.cleared_all_events), Toast.LENGTH_LONG).show();
+                }
+            });
+
+            mainbuilder.setNegativeButton(R.string.nein, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            AlertDialog maindialog = mainbuilder.create();
+            maindialog.show();
         }
 
         stream();

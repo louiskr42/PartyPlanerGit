@@ -9,6 +9,7 @@
     <string name="ja">Ja</string>
     <string name="nein">Nein</string>
     <string name="alles_loeschen">Bist du dir sicher, dass du alles löschen möchtest?</string>
+    <string name="alles_aufheben">Bist du dir sicher, dass du alle Markierungen aufheben möchtest?</string>
     <string name="gib_etwas_ein">Bitte gib etwas ein</string>
     <string name="gib_namen_der_aufgabe">Gib den Namen der Aufgabe ein</string>
     <string name="gib_namen_gast">Gib den Namen des Gastes ein</string>
@@ -30,5 +31,11 @@
     <string name="set_blockedEvent">Datum wurde als blockiert markiert!</string>
     <string name="set_freeEvent">Datum wurde als verfügbar markiert!</string>
     <string name="cleared_event">Markierung wurde aufgehoben!</string>
+    <string name="cleared_all_events">Alle Markierungen aufgehoben!</string>
+    <string name="choose_date">Bitte wähle ein Datum aus!</string>
+    <string name="vielleicht">vielleicht</string>
+    <string name="zusagen">Zusagen</string>
+    <string name="absagen">Absagen</string>
+    <string name="neutral">neutral</string>
 
 </resources>

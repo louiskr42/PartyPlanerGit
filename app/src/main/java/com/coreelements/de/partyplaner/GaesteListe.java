@@ -51,7 +51,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_gaeste_liste);
+        setContentView(R.layout.layout_guestlist_constriant);
 
         deleteAllBTN = (Button)findViewById(R.id.deleteAllButton);
         deleteAllBTN.setOnClickListener(this);

@@ -3,16 +3,24 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorGreyAccent</item>
-        <item name="colorAccent">@color/colorGreyAccent</item>
-        <item name="android:colorBackground">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorLightBlue900</item>
+        <item name="colorPrimaryDark">@color/colorBlue900</item>
+        <item name="colorAccent">@color/colorLightBlue800</item>
+        <item name="android:colorBackground">@color/colorWhite</item>
     </style>
 
     <style name="TextStyleMainMenu">
-        <item name="android:textSize">30dp</item>
+        <item name="android:gravity">top|center_horizontal</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_weight">20</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorWhiteTransparent</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ImageViewStyleMainMenu">
+        <item name="android:layout_weight">40</item>
     </style>
 
     <style name="TextStyleAufgabenListViewMain">
