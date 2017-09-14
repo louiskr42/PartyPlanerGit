@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorLightBlue900</item>
         <item name="colorPrimaryDark">@color/colorBlue900</item>
         <item name="colorAccent">@color/colorLightBlue800</item>
-        <item name="android:colorBackground">@color/colorWhite</item>
+        <item name="android:colorBackground">@color/backgroundGreyLight</item>
     </style>
 
     <style name="TextStyleMainMenu">
@@ -14,9 +14,17 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_weight">20</item>
-        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textColor">@color/colorBlue900</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="InfoTextViewStyle">
+        <item name="android:textColor">@color/colorLightBlue800</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="ImageViewStyleMainMenu">

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,11 +49,21 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     File                            eventFile,bfFile;
 
+    SharedPreferences               infoCalendar;
+    SharedPreferences.Editor        infoCalendarEditor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_kalender_constraint);
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
 
         blockBTN = (Button)findViewById(R.id.blockButton);
         blockBTN.setOnClickListener(this);
@@ -117,6 +131,9 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         /*final Event testEvent = new Event(Color.RED, 1503352800000L, "Neues Event");
         calendar.addEvent(testEvent);
         blockedEventList.add(testEvent.getTimeInMillis());*/
+
+        infoCalendar = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoCalendarEditor = infoCalendar.edit();
 
         calendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
@@ -248,6 +265,10 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
         }
+
+        int info = freeEventList.size();
+        infoCalendarEditor.putInt("infoCalendar", info);
+        infoCalendarEditor.commit();
     }
 
     public void fillCalendar(){

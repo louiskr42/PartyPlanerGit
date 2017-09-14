@@ -25,4 +25,5 @@
     android:minHeight="?android:attr/listPreferredItemHeightSmall"
     android:textColor="@color/colorBlack"
     android:textSize="15sp"
-    android:textStyle="bold"/>
+    android:textStyle="bold"
+    android:background="@color/colorWhite"/>

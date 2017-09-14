@@ -21,6 +21,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -41,8 +45,8 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     ArrayList<String> listItems;
     ArrayAdapter<String> aufgabenPersonenAdapter;
 
-    SharedPreferences mainPref, subPref;
-    SharedPreferences.Editor mainPrefEditor, subPrefEditor;
+    SharedPreferences mainPref, subPref, infoTodos;
+    SharedPreferences.Editor mainPrefEditor, subPrefEditor, infoTodosEditor;
 
     File file;
     //Datei, in der die Liste gespeichert wird
@@ -52,6 +56,13 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_aufgabenverteilung);
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
 
         btn = (Button) findViewById(R.id.deleteAllButton);
         btn.setOnClickListener(this);
@@ -73,9 +84,11 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
         subPref = this.getSharedPreferences("Personen", MODE_PRIVATE);
         subPrefEditor = subPref.edit();
+
+        infoTodos = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoTodosEditor = infoTodos.edit();
+
         //SharedPreferences initialisieren
-
-
 
         file = new File(getDir("dataItems", MODE_PRIVATE), "list");
         try {
@@ -101,6 +114,8 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
         aufgabenPersonenAdapter = new ArrayAdapter<String>(this, R.layout.simple_list, listItems);
 
         aufgabenLV.setAdapter(aufgabenPersonenAdapter);
+
+        stream();
     }
 
     public void sortList(String aufgabe, String person){
@@ -209,6 +224,10 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
         }
+
+        int info = listItems.size();
+        infoTodosEditor.putInt("infoTodos", info);
+        infoTodosEditor.commit();
 
         //speichert die Liste über den ObjectOutputStream in file
     }

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,10 +53,22 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
     boolean                 deleteMode = false;
 
+    int infoFree, infoTotal;
+
+    SharedPreferences           infoGuestlistFree, infoGuestlistTotal;
+    SharedPreferences.Editor    infoGuestlistFreeEditor, infoGuestlistTotalEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_guestlist_constriant);
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
 
         deleteAllBTN = (Button)findViewById(R.id.deleteAllButton);
         deleteAllBTN.setOnClickListener(this);
@@ -73,7 +90,14 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         neinTV = (TextView)findViewById(R.id.neinTextView);
         neutralTV = (TextView)findViewById(R.id.neutralTextView);
 
+        infoGuestlistFree = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoGuestlistFreeEditor = infoGuestlistFree.edit();
+
+        infoGuestlistTotal = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoGuestlistTotalEditor = infoGuestlistTotal.edit();
+
         file = new File(getDir("dataGaeste", MODE_PRIVATE), "gaesteListe");
+
         try {
             inputStream = new ObjectInputStream(new FileInputStream(file));
         } catch (IOException e) {
@@ -110,6 +134,12 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         }
 
         //speichert die Liste über den ObjectOutputStream in file
+
+        infoGuestlistFreeEditor.putInt("infoGuestlistFree", infoFree);
+        infoGuestlistFreeEditor.commit();
+
+        infoGuestlistTotalEditor.putInt("infoGuestlistTotal", infoTotal);
+        infoGuestlistTotalEditor.commit();
     }
 
     @Override
@@ -221,7 +251,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
             deleteMode = false;
             aufgabenTV.setText(getString(R.string.gib_namen_gast));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                aufgabenTV.setTextColor(getColor(R.color.colorWhiteTransparent));
+                aufgabenTV.setTextColor(getColor(R.color.colorLightBlue700));
             }
             deleteSingleBTN.setText(getString(R.string.namen_loeschen));
             editET.setClickable(true);
@@ -299,6 +329,9 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
     public void setCounter(int jaSize, int neinSize, int vielleichtSize, int neutralSize){
         int size = guestList.size();
 
+        infoFree = jaSize;
+        infoTotal = size;
+
         vielleichtTV.setText(vielleichtSize+"/" + size + "\nVielleicht");
         jaTV.setText(jaSize+"/" + size+ "\nZusagen");
         neinTV.setText(neinSize+"/" + size+"\nAbsagen");
@@ -332,7 +365,6 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
             c++;
         }
-
         setCounter(jaSize, neinSize, vielleichtSize, neutralSize);
     }
 
@@ -360,5 +392,11 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
             loadItemStatus();
         }
         return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stream();
     }
 }

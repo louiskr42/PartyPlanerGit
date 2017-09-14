@@ -3,6 +3,7 @@ package com.coreelements.de.partyplaner;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -10,222 +11,211 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import com.google.android.gms.ads.MobileAds;
+
 public class MainMenu extends AppCompatActivity implements View.OnTouchListener {
 
-    TextView aufgabenTV, guesteListeTV, kalenderTV, einkaufsListeTV;
-    ImageView todoIV, guestListIV, calendarIV, shoppingIV;
-    ScrollView sView;
+    SharedPreferences infoTodos, infoCalendar, infoShopping, infoGuestlistFree, infoGuestlistTotal;
+
+    @BindView(R.id.todo_menu_layout) RelativeLayout todoRl;
+    @BindView(R.id.guestlist_menu_layout) RelativeLayout guestlistRl;
+    @BindView(R.id.calendar_menu_layout) RelativeLayout calendarRl;
+    @BindView(R.id.shopping_menu_layout) RelativeLayout shoppingRl;
+
+    @BindView(R.id.todoIconImageView) ImageView todoIV;
+    @BindView(R.id.guestlistIconImageView) ImageView guestListIV;
+    @BindView(R.id.calendarIconImageView) ImageView calendarIV;
+    @BindView(R.id.shoppingIconImageView) ImageView shoppingIV;
+
+    @BindView(R.id.todoInfoTextView) TextView todoInfoTextView;
+    @BindView(R.id.guestlistInfoTextView) TextView guestlistInfoTextView;
+    @BindView(R.id.calendarInfoTextView) TextView calendarInfoTextView;
+    @BindView(R.id.shoppingInfoTextView) TextView shoppingInfoTextView;
+
+    @BindView(R.id.shoppingNameTextView) TextView shoppingNameTextView;
+    @BindView(R.id.todoNameTextView) TextView todoNameTextView;
+    @BindView(R.id.calendarNameTextView) TextView calendarNameTextView;
+    @BindView(R.id.guestlistNameTextView) TextView guestlistNameTextView;
+
+    @BindView(R.id.menuScrollView) ScrollView scrollView;
+
+    int themeGreyHighkight = R.color.colorGreyHighlightMain;
+    int themeAccent = R.color.colorLightBlue700;
+    int themeWhite = R.color.colorWhite;
+    int themeMainColor = R.color.colorLightBlue900;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_main_new);
+        setContentView(R.layout.main_menu_new_test);
 
-        sView = (ScrollView)findViewById(R.id.scrollView);
-        sView.setOnTouchListener(this);
+        initializeAdBanner();
 
-        aufgabenTV = (TextView)findViewById(R.id.todoTextView);
-        aufgabenTV.setOnTouchListener(this);
+        ButterKnife.bind(this);
 
-        guesteListeTV = (TextView)findViewById(R.id.guestlistTextView);
-        guesteListeTV.setOnTouchListener(this);
+        defineObjects();
 
-        kalenderTV = (TextView)findViewById(R.id.calendarTextView);
-        kalenderTV.setOnTouchListener(this);
+        setColorFilterImageViews();
 
-        einkaufsListeTV = (TextView)findViewById(R.id.shoppingTextView);
-        einkaufsListeTV.setOnTouchListener(this);
+        setColorFilterInfoTextViews();
 
-        todoIV = (ImageView)findViewById(R.id.todoImageView);
-        todoIV.setOnTouchListener(this);
-
-        guestListIV = (ImageView)findViewById(R.id.guestlistImageView);
-        guestListIV.setOnTouchListener(this);
-
-        calendarIV = (ImageView)findViewById(R.id.calendarImageView);
-        calendarIV.setOnTouchListener(this);
-
-        shoppingIV = (ImageView)findViewById(R.id.shoppingImageView);
-        shoppingIV.setOnTouchListener(this);
-
-        setColorFilter();
+        getInfos();
     }
 
-    public void setColorFilter(){
-        shoppingIV.setColorFilter(Color.GRAY);
-        calendarIV.setColorFilter(Color.GRAY);
-        guestListIV.setColorFilter(Color.GRAY);
-        todoIV.setColorFilter(Color.GRAY);
+    public void defineObjects() {
 
-        aufgabenTV.setTextColor(Color.GRAY);
-        guesteListeTV.setTextColor(Color.GRAY);
-        kalenderTV.setTextColor(Color.GRAY);
-        einkaufsListeTV.setTextColor(Color.GRAY);
+        todoRl.setOnTouchListener(this);
+        guestlistRl.setOnTouchListener(this);
+        calendarRl.setOnTouchListener(this);
+        shoppingRl.setOnTouchListener(this);
+        scrollView.setOnTouchListener(this);
+
+        infoTodos = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoCalendar = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoShopping = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoGuestlistFree = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoGuestlistTotal = this.getSharedPreferences("Info", MODE_PRIVATE);
     }
 
-    @Override
+    public void initializeAdBanner() {
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        adView.loadAd(adRequest);
+
+    }
+
+    public void setColorFilterImageViews(){
+        int highlightColor = themeGreyHighkight;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            todoIV.setColorFilter(getColor(highlightColor));
+            shoppingIV.setColorFilter(getColor(highlightColor));
+            calendarIV.setColorFilter(getColor(highlightColor));
+            guestListIV.setColorFilter(getColor(highlightColor));
+        }
+        else {
+            todoIV.setColorFilter(Color.GRAY);
+            shoppingIV.setColorFilter(Color.GRAY);
+            calendarIV.setColorFilter(Color.GRAY);
+            guestListIV.setColorFilter(Color.GRAY);
+        }
+    }
+
+    private void setColorFilterInfoTextViews() {
+        int accentColor = themeAccent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            todoInfoTextView.setTextColor(getColor(accentColor));
+            guestlistInfoTextView.setTextColor(getColor(accentColor));
+            calendarInfoTextView.setTextColor(getColor(accentColor));
+            shoppingInfoTextView.setTextColor(getColor(accentColor));
+        }
+        else {
+            todoInfoTextView.setTextColor(Color.GRAY);
+            guestlistInfoTextView.setTextColor(Color.GRAY);
+            calendarInfoTextView.setTextColor(Color.GRAY);
+            shoppingInfoTextView.setTextColor(Color.GRAY);
+        }
+    }
+
+    private void setColorFilterNameTextViews(){
+        int mainColor = themeMainColor;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            todoNameTextView.setTextColor(getColor(mainColor));
+            shoppingNameTextView.setTextColor(getColor(mainColor));
+            calendarNameTextView.setTextColor(getColor(mainColor));
+            guestlistNameTextView.setTextColor(getColor(mainColor));
+        }
+
+    }
+
     public boolean onTouch(View v, MotionEvent event) {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 switch (v.getId()) {
-                    case R.id.todoTextView:
+                    case R.id.todo_menu_layout:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            todoIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            aufgabenTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
+                            todoRl.setBackgroundColor(getColor(R.color.selectedGreyLight));
                         }
                         return true;
-                }
 
-                switch (v.getId()) {
-                    case R.id.todoImageView:
+                    case R.id.guestlist_menu_layout:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            todoIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            aufgabenTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
+                            guestlistRl.setBackgroundColor(getColor(R.color.selectedGreyLight));
                         }
                         return true;
-                }
 
-                switch (v.getId()){
-                    case R.id.guestlistTextView:
+                    case R.id.calendar_menu_layout:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            guestListIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            guesteListeTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
+                            calendarRl.setBackgroundColor(getColor(R.color.selectedGreyLight));
                         }
                         return true;
-                }
 
-                switch (v.getId()) {
-                    case R.id.guestlistImageView:
+                    case R.id.shopping_menu_layout:
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            guestListIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            guesteListeTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
+                            shoppingRl.setBackgroundColor(getColor(R.color.selectedGreyLight));
                         }
                         return true;
                 }
-
-                switch (v.getId()){
-                    case R.id.calendarTextView:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            calendarIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            kalenderTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                        }
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.calendarImageView:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            calendarIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            kalenderTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                        }
-                        return true;
-                }
-
-                switch (v.getId()){
-                    case R.id.shoppingTextView:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            shoppingIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            einkaufsListeTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                        }
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.shoppingImageView:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            shoppingIV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                            einkaufsListeTV.setBackgroundColor(getColor(R.color.selectedGreyLight));
-                        }
-                        return true;
-                }
-                return true;
 
             case MotionEvent.ACTION_UP:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    setItemsToNormal();
-                }
-                switch (v.getId()) {
-                    case R.id.todoTextView:
-                        startActivity(new Intent(getApplicationContext(), ToDosList.class));
-                        finish();
-                        return true;
-                }
 
-                switch (v.getId()) {
-                    case R.id.todoImageView:
-                        startActivity(new Intent(getApplicationContext(), ToDosList.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.guestlistTextView:
-                        startActivity(new Intent(getApplicationContext(), GaesteListe.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.guestlistImageView:
-                        startActivity(new Intent(getApplicationContext(), GaesteListe.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.calendarTextView:
-                        startActivity(new Intent(getApplicationContext(), Kalender.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.calendarImageView:
-                        startActivity(new Intent(getApplicationContext(), Kalender.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.shoppingTextView:
-                        startActivity(new Intent(getApplicationContext(), Einkaufsliste.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.shoppingImageView:
-                        startActivity(new Intent(getApplicationContext(), Einkaufsliste.class));
-                        finish();
-                        return true;
-                }
-
-                switch (v.getId()) {
-                    case R.id.scrollView:
-                        setItemsToNormal();
-                        return true;
-                }
-
-                return true;
-
-
+                launchActivity(v);
         }
         return false;
     }
 
+    public void launchActivity(View v) {
+
+        if (v.getId() == R.id.todo_menu_layout) {
+            startActivity(new Intent(this, ToDosList.class));
+            finish();
+        }
+        else if (v.getId() == R.id.guestlist_menu_layout) {
+            startActivity(new Intent(this, GaesteListe.class));
+            finish();
+        }
+        else if (v.getId() == R.id.calendar_menu_layout) {
+            startActivity(new Intent(this, Kalender.class));
+            finish();
+        }
+        else if (v.getId() == R.id.shopping_menu_layout) {
+            startActivity(new Intent(this, Einkaufsliste.class));
+            finish();
+        }
+        else if (v.getId() == R.id.menuScrollView) {
+            setItemsToNormal();
+        }
+
+        getInfos();
+
+    }
+
     private void setItemsToNormal() {
-        todoIV.setBackgroundColor(Color.WHITE);
-        guestListIV.setBackgroundColor(Color.WHITE);
-        calendarIV.setBackgroundColor(Color.WHITE);
-        shoppingIV.setBackgroundColor(Color.WHITE);
-        aufgabenTV.setBackgroundColor(Color.WHITE);
-        guesteListeTV.setBackgroundColor(Color.WHITE);
-        kalenderTV.setBackgroundColor(Color.WHITE);
-        einkaufsListeTV.setBackgroundColor(Color.WHITE);
+        int mainColor = themeWhite;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            todoRl.setBackgroundColor(getColor(mainColor));
+            guestlistRl.setBackgroundColor(getColor(mainColor));
+            calendarRl.setBackgroundColor(getColor(mainColor));
+            shoppingRl.setBackgroundColor(getColor(mainColor));
+        }
+
+        setColorFilterInfoTextViews();
+        setColorFilterNameTextViews();
     }
 
     @Override
@@ -247,5 +237,63 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
 
         AlertDialog maindialog = mainbuilder.create();
         maindialog.show();
+    }
+
+    public void getInfos() {
+
+        setItemsToNormal();
+
+        if (infoTodos.getInt("infoTodos", 0) != 0) {
+            String info = getString(R.string.somany_tasks_to_do);
+            info = String.format(info, infoTodos.getInt("infoTodos", 0) + "");
+            todoInfoTextView.setText(info);
+        }
+        else {
+            todoInfoTextView.setText(R.string.all_tasks_done);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                todoInfoTextView.setTextColor(getColor(themeGreyHighkight));
+                todoNameTextView.setTextColor(getColor(themeGreyHighkight));
+            }
+        }
+
+        if (infoCalendar.getInt("infoCalendar", 0) != 0) {
+            String info = getString(R.string.somany_available_events);
+            info = String.format(info, infoCalendar.getInt("infoCalendar", 0) + "");
+            calendarInfoTextView.setText(info);
+        }
+        else {
+            calendarInfoTextView.setText(R.string.no_available_events);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                calendarInfoTextView.setTextColor(getColor(themeGreyHighkight));
+                calendarNameTextView.setTextColor(getColor(themeGreyHighkight));
+            }
+        }
+
+        if (infoShopping.getInt("infoShopping", 0) != 0) {
+            String info = getString(R.string.somany_items_on_list);
+            info = String.format(info, infoShopping.getInt("infoShopping", 0) + "");
+            shoppingInfoTextView.setText(info);
+        }
+        else {
+            shoppingInfoTextView.setText(R.string.no_items_on_shoppinglist);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                shoppingInfoTextView.setTextColor(getColor(themeGreyHighkight));
+                shoppingNameTextView.setTextColor(getColor(themeGreyHighkight));
+
+            }
+        }
+
+        if (infoGuestlistTotal.getInt("infoGuestlistTotal", 0) != 0) {
+            guestlistInfoTextView.setText(infoGuestlistFree.getInt("infoGuestlistFree", 0) + " von " +
+                    infoGuestlistTotal.getInt("infoGuestlistTotal", 0) +
+                    " Gästen haben zugesagt");
+        }
+        else {
+            guestlistInfoTextView.setText(R.string.no_guests_on_guestlist);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                guestlistInfoTextView.setTextColor(getColor(themeGreyHighkight));
+                guestlistNameTextView.setTextColor(getColor(themeGreyHighkight));
+            }
+        }
     }
 }

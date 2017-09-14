@@ -37,5 +37,17 @@
     <string name="zusagen">Zusagen</string>
     <string name="absagen">Absagen</string>
     <string name="neutral">neutral</string>
+    <string name="name_of_vote_option">Gib den Namen einer der Abstimmungsmöglichkeiten ein</string>
+    <string name="vote_option">Name der Abstimmungsmöglichkeit</string>
+    <string name="delete_all_votes">Alle Möglichkeiten löschen</string>
+    <string name="delete_single_vote">Eine Möglichkeit löschen</string>
+    <string name="somany_tasks_to_do">%1$s unerledigte Aufgaben übrig</string>
+    <string name="all_tasks_done">Alle Aufgaben erledigt</string>
+    <string name="somany_available_events">%1$s verfügbare Termine</string>
+    <string name="somany_items_on_list">%1$s Artikel auf der Einkaufsliste</string>
+    <string name="no_available_events">Keine verfügbaren Termine</string>
+    <string name="no_items_on_shoppinglist">Keine Artikel auf der Einkaufsliste</string>
+    <string name="no_guests_on_guestlist">Noch keine Gäste auf der Liste</string>
+    <string name="somany_guests"></string>
 
 </resources>

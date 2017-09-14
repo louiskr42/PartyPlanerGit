@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Aufgabenverteilung"/>
         <activity android:name=".ToDosList"/>
         <activity android:name=".GaesteListe"/>
         <activity android:name=".Kalender"/>

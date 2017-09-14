@@ -21,6 +21,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,10 +47,20 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
     //Datei, in der die Liste gespeichert wird
     ObjectInputStream inputStream;
 
+    SharedPreferences           infoShopping;
+    SharedPreferences.Editor    infoShoppingEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_aufgabenverteilung);
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
 
         deleteAllBTN = (Button) findViewById(R.id.deleteAllButton);
         deleteAllBTN.setOnClickListener(this);
@@ -64,6 +78,9 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
         aufgabenTV = (TextView) findViewById(R.id.aufgabenTextView);
         aufgabenTV.setText(getString(R.string.gib_artikel));
         //TextView initialisieren
+
+        infoShopping = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoShoppingEditor = infoShopping.edit();
 
         file = new File(getDir("dataShopping", MODE_PRIVATE), "shoppingList");
         try {
@@ -163,12 +180,16 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
             outputStream.writeObject(listItems);
             outputStream.flush();
             outputStream.close();
+
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
         }
-
         //speichert die Liste über den ObjectOutputStream in file
+
+        int info = listItems.size();
+        infoShoppingEditor.putInt("infoShopping", info);
+        infoShoppingEditor.commit();
     }
 
     public void sortList(String aufgabe){

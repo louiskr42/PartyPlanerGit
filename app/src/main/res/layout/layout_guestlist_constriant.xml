@@ -10,7 +10,7 @@
     <EditText
         android:id="@+id/aufgabenEditText"
         android:layout_width="0dp"
-        android:layout_height="75dp"
+        android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="0dp"
