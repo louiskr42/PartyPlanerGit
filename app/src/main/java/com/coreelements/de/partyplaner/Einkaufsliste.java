@@ -35,17 +35,19 @@ import java.util.ArrayList;
 
 public class Einkaufsliste extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, AdapterView.OnItemClickListener {
 
-    Button  deleteAllBTN;
-    ListView aufgabenLV;
-    EditText aufgabenET;
-    TextView aufgabenTV;
+    final static String         bannerID = "ca-app-pub-1814335808278709~4572376197";
 
-    ArrayList<String> listItems;
-    ArrayAdapter<String> aufgabenPersonenAdapter;
+    File                        file = new File(getDir("dataShopping", MODE_PRIVATE), "shoppingList");
 
-    File file;
-    //Datei, in der die Liste gespeichert wird
-    ObjectInputStream inputStream;
+    Button                      deleteAllBTN;
+    ListView                    aufgabenLV;
+    EditText                    aufgabenET;
+    TextView                    aufgabenTV;
+
+    ArrayList<String>           listItems;
+    ArrayAdapter<String>        aufgabenPersonenAdapter;
+
+    ObjectInputStream           inputStream;
 
     SharedPreferences           infoShopping;
     SharedPreferences.Editor    infoShoppingEditor;
@@ -55,57 +57,96 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_aufgabenverteilung);
 
-        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+        initializeObjects();
+
+    }
+
+    public void initializeObjects() {
+        defineButtons();
+        defineEditTexts();
+        defineListViews();
+        defineTextViews();
+        defineSharedPreferences();
+        loadListAndSetAdapter();
+        initializeAdBanner();
+        stream();
+    }
+
+    public void defineButtons() {
+        deleteAllBTN = (Button) findViewById(R.id.deleteAllButton);
+        deleteAllBTN.setOnClickListener(this);
+        deleteAllBTN.setText(getString(R.string.alle_artikel_loeschen));
+        //Button initialisieren
+    }
+
+    public void defineEditTexts() {
+        aufgabenET = (EditText) findViewById(R.id.aufgabenEditText);
+        aufgabenET.setOnKeyListener(this);
+        //EditText initialisieren und Text einstellen
+    }
+
+    public void defineTextViews() {
+        aufgabenTV = (TextView) findViewById(R.id.aufgabenTextView);
+        aufgabenTV.setText(getString(R.string.gib_artikel));
+        //TextView initialisieren
+    }
+
+    public void defineListViews() {
+        aufgabenLV = (ListView) findViewById(R.id.aufgabenListView);
+        aufgabenLV.setOnItemClickListener(this);
+        //ListView initialisieren
+    }
+
+    public void defineSharedPreferences() {
+        infoShopping = this.getSharedPreferences("Info", MODE_PRIVATE);
+        infoShoppingEditor = infoShopping.edit();
+    }
+
+    public void loadListAndSetAdapter() {
+
+        try {
+
+            inputStream = new ObjectInputStream(new FileInputStream(file));
+
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
+
+        if (inputStream != null) {
+
+            try {
+                listItems = (ArrayList<String>) inputStream.readObject();
+            }
+            catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+
+            listItems = new ArrayList<>();
+
+        }
+        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
+
+        aufgabenPersonenAdapter = new ArrayAdapter<>(this, R.layout.simple_list, listItems);
+
+        aufgabenLV.setAdapter(aufgabenPersonenAdapter);
+    }
+
+    public void initializeAdBanner() {
+        MobileAds.initialize(this, bannerID);
 
         AdView adView = (AdView)findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
 
-        deleteAllBTN = (Button) findViewById(R.id.deleteAllButton);
-        deleteAllBTN.setOnClickListener(this);
-        deleteAllBTN.setText(getString(R.string.alle_artikel_loeschen));
-        //Button initialisieren
-
-        aufgabenET = (EditText) findViewById(R.id.aufgabenEditText);
-        aufgabenET.setOnKeyListener(this);
-        //EditText initialisieren und Text einstellen
-
-        aufgabenLV = (ListView) findViewById(R.id.aufgabenListView);
-        aufgabenLV.setOnItemClickListener(this);
-        //ListView initialisieren
-
-        aufgabenTV = (TextView) findViewById(R.id.aufgabenTextView);
-        aufgabenTV.setText(getString(R.string.gib_artikel));
-        //TextView initialisieren
-
-        infoShopping = this.getSharedPreferences("Info", MODE_PRIVATE);
-        infoShoppingEditor = infoShopping.edit();
-
-        file = new File(getDir("dataShopping", MODE_PRIVATE), "shoppingList");
-        try {
-            inputStream = new ObjectInputStream(new FileInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
-
-        if (inputStream != null) {
-            try {
-                listItems = (ArrayList<String>) inputStream.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            listItems = new ArrayList<>();
-        }
-        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
-
-        aufgabenPersonenAdapter = new ArrayAdapter<String>(this, R.layout.simple_list, listItems);
-
-        aufgabenLV.setAdapter(aufgabenPersonenAdapter);
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -140,9 +181,6 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
             maindialog.show();
 
             //erstellt einen Bist du dir sicher? Dialog vor dem Löschen aller Aufgaben
-
-        } else {
-
         }
     }
 
@@ -175,24 +213,30 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
     }
 
     public void stream() {
+
         try {
+
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
             outputStream.writeObject(listItems);
             outputStream.flush();
             outputStream.close();
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
+
         }
         //speichert die Liste über den ObjectOutputStream in file
 
         int info = listItems.size();
         infoShoppingEditor.putInt("infoShopping", info);
         infoShoppingEditor.commit();
+
     }
 
-    public void sortList(String aufgabe){
+    public void sortList(String aufgabe) {
         listItems.add(aufgabe.replace("\n", "").replace("  ", ""));
         aufgabenPersonenAdapter.notifyDataSetChanged();
         aufgabenLV.setAdapter(aufgabenPersonenAdapter);
@@ -201,24 +245,37 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
+
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
+
                 if (aufgabenET.getText().toString().replace("\n", "").replace(" ", "").length() > 0) {
+
                     String artikel = aufgabenET.getText().toString().replace("\n", "").replace("  ", "");
                     sortList(artikel);
                     stream();
-                } else {
+
+                }
+                else {
+
                     Toast t = Toast.makeText(getApplicationContext(), getString(R.string.gib_etwas_ein), Toast.LENGTH_LONG);
                     t.show();
+
                 }
+
             }
+
             aufgabenET.setText("".replace("\n", ""));
+
         }
+
         return false;
+
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
@@ -226,16 +283,21 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
         MenuItem searchItem = menu.findItem(R.id.item_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
-            public boolean onQueryTextChange(String newText){
+            public boolean onQueryTextChange(String newText) {
+
                 ArrayList<String> templist = new ArrayList<>();
 
                 for(String temp : listItems){
+
                     if (temp.toLowerCase().contains(newText.toLowerCase())){
+
                         templist.add(temp);
+
                     }
+
                 }
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(Einkaufsliste.this, R.layout.simple_list, templist);
@@ -248,15 +310,19 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
+
         });
 
         return super.onCreateOptionsMenu(menu);
+
     }
 
     @Override
     public void onPause() {
+
         super.onPause();
         stream();
         //lässt stream laufen, wenn die Activity pausiert oder beendet wird
+
     }
 }

@@ -38,22 +38,21 @@ import java.util.ArrayList;
 
 public class GaesteListe extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener, View.OnKeyListener {
 
-    Button                  deleteAllBTN, deleteSingleBTN;
-    TextView                aufgabenTV;
-    ListView                listLV;
-    EditText                editET;
+    boolean                     deleteMode = false;
 
-    TextView                vielleichtTV, jaTV, neinTV, neutralTV;
+    int                         infoFree, infoTotal;
 
-    ArrayList<String>       guestList;
-    ArrayAdapter<String>    adapter;
+    Button                      deleteAllBTN, deleteSingleBTN;
+    TextView                    aufgabenTV, vielleichtTV, jaTV, neinTV, neutralTV;
+    ListView                    listLV;
+    EditText                    editET;
 
-    File                    file;
-    ObjectInputStream       inputStream;
+    ArrayList<String>           guestList;
+    ArrayAdapter<String>        adapter;
 
-    boolean                 deleteMode = false;
+    File                        file = new File(getDir("dataGaeste", MODE_PRIVATE), "gaesteListe");
 
-    int infoFree, infoTotal;
+    ObjectInputStream           inputStream;
 
     SharedPreferences           infoGuestlistFree, infoGuestlistTotal;
     SharedPreferences.Editor    infoGuestlistFreeEditor, infoGuestlistTotalEditor;
@@ -63,12 +62,26 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_guestlist_constriant);
 
-        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+        initializeObjects();
 
-        AdView adView = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+        loadListAndSetAdapter();
+
+        loadItemStatus();
+
+    }
+
+    public void initializeObjects() {
+
+        defineSharedPreferences();
+        defineTextViews();
+        defineListViews();
+        defineEditTexts();
+        defineButtons();
+        initializeAdBanner();
+
+    }
+
+    public void defineButtons() {
 
         deleteAllBTN = (Button)findViewById(R.id.deleteAllButton);
         deleteAllBTN.setOnClickListener(this);
@@ -76,19 +89,28 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         deleteSingleBTN = (Button)findViewById(R.id.deleteSingleButton);
         deleteSingleBTN.setOnClickListener(this);
 
+    }
+
+    public void defineEditTexts() {
+
         editET = (EditText)findViewById(R.id.aufgabenEditText);
         editET.setOnKeyListener(this);
 
+    }
+
+    public void defineTextViews() {
+
         aufgabenTV = (TextView)findViewById(R.id.aufgabenTextView);
         aufgabenTV.setText(getString(R.string.gib_namen_gast));
-
-        listLV = (ListView)findViewById(R.id.aufgabenListView);
-        listLV.setOnItemClickListener(this);
 
         vielleichtTV = (TextView)findViewById(R.id.vielleichtTextView);
         jaTV = (TextView)findViewById(R.id.jaTextView);
         neinTV = (TextView)findViewById(R.id.neinTextView);
         neutralTV = (TextView)findViewById(R.id.neutralTextView);
+
+    }
+
+    public void defineSharedPreferences() {
 
         infoGuestlistFree = this.getSharedPreferences("Info", MODE_PRIVATE);
         infoGuestlistFreeEditor = infoGuestlistFree.edit();
@@ -96,41 +118,80 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         infoGuestlistTotal = this.getSharedPreferences("Info", MODE_PRIVATE);
         infoGuestlistTotalEditor = infoGuestlistTotal.edit();
 
-        file = new File(getDir("dataGaeste", MODE_PRIVATE), "gaesteListe");
+    }
+
+    public void defineListViews() {
+
+        listLV = (ListView)findViewById(R.id.aufgabenListView);
+        listLV.setOnItemClickListener(this);
+
+    }
+
+    public void initializeAdBanner() {
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
+
+    }
+
+    public void loadListAndSetAdapter() {
 
         try {
+
             inputStream = new ObjectInputStream(new FileInputStream(file));
-        } catch (IOException e) {
+
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
+
         }
 
         if (inputStream != null) {
+
             try {
+
                 guestList = (ArrayList<String>) inputStream.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+
             }
-        } else {
+            catch (IOException | ClassNotFoundException e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
+        else {
+
             guestList = new ArrayList<>();
+
         }
 
-        adapter = new ArrayAdapter<String>(this, R.layout.simple_list, guestList);
+        adapter = new ArrayAdapter<>(this, R.layout.simple_list, guestList);
         listLV.setAdapter(adapter);
 
-        loadItemStatus();
     }
 
     public void stream() {
+
         try {
+
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
             outputStream.writeObject(guestList);
             outputStream.flush();
             outputStream.close();
-        } catch (IOException e) {
+
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
             Toast.makeText(this, getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
+
         }
 
         //speichert die Liste über den ObjectOutputStream in file
@@ -144,9 +205,11 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onBackPressed() {
+
         startActivity(new Intent(getApplicationContext(), MainMenu.class));
         finish();
         //beendet die Activity und geht zurück zum Hauptmenü bei Klick auf die Zurück-Taste
+
     }
 
     @Override
@@ -162,12 +225,17 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public boolean onQueryTextChange(String newText){
+
                 ArrayList<String> templist = new ArrayList<>();
 
                 for(String temp : guestList){
+
                     if (temp.toLowerCase().contains(newText.toLowerCase())){
+
                         templist.add(temp);
+
                     }
+
                 }
 
                 ArrayAdapter<String> queryAdapter = new ArrayAdapter<>(GaesteListe.this, R.layout.simple_list, templist);
@@ -180,6 +248,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
+
         });
 
         return super.onCreateOptionsMenu(menu);
@@ -223,8 +292,11 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
             loadItemStatus();
 
-        }else{
+        }
+        else{
+
             checkDeleteMode();
+
         }
 
         loadItemStatus();
@@ -233,29 +305,46 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
     public void checkDeleteMode(){
 
-        if (deleteMode == false){
+        if (!deleteMode){
+
             deleteMode = true;
             aufgabenTV.setText(getString(R.string.welches_loeschen));
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 aufgabenTV.setTextColor(getColor(R.color.gaestListRed));
+
             }
+
             View view = this.getCurrentFocus();
+
             if (view != null) {
+
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
             }
+
             deleteSingleBTN.setText(getString(R.string.namen_hinzufuegen));
             editET.setClickable(false);
             editET.setVisibility(View.INVISIBLE);
-        }else{
+
+        }
+        else{
+
             deleteMode = false;
             aufgabenTV.setText(getString(R.string.gib_namen_gast));
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 aufgabenTV.setTextColor(getColor(R.color.colorLightBlue700));
+
             }
+
             deleteSingleBTN.setText(getString(R.string.namen_loeschen));
             editET.setClickable(true);
             editET.setVisibility(View.VISIBLE);
+
         }
 
     }
@@ -265,17 +354,22 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
         String item = guestList.get(position);
 
-        if (deleteMode == false) {
+        if (!deleteMode) {
 
             checkItemStatus(view, position);
 
             stream();
             loadItemStatus();
 
-        }else{
+        }
+        else{
 
             AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
-            mainbuilder.setMessage(getString(R.string.gast_loeschen1) + " " + '"' + item.replace("\n", "").replace("  ", "").replace("|Vielleicht|", "").replace("|Nein|", "").replace("|Ja|", "") + '"' + " " + getString(R.string.gast_loeschen2));
+            mainbuilder.setMessage(getString(R.string.gast_loeschen1) + " " + '"' + item.replace("\n", "")
+                    .replace("  ", "")
+                    .replace("|Vielleicht|", "")
+                    .replace("|Nein|", "")
+                    .replace("|Ja|", "") + '"' + " " + getString(R.string.gast_loeschen2));
             mainbuilder.setCancelable(true);
 
             mainbuilder.setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
@@ -297,6 +391,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
             stream();
             loadItemStatus();
+
         }
 
         loadItemStatus();
@@ -307,26 +402,38 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
         String item = guestList.get(position);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
             if (item.contains("|Nein|")){
+
                 guestList.set(position, item.replace("|Nein|", "").replace("\n", "").replace("  ", "") + "\n");
                 adapter.notifyDataSetChanged();
-            }else if (item.contains("|Vielleicht|")) {
+
+            }
+            else if (item.contains("|Vielleicht|")) {
+
                 guestList.set(position, item.replace("|Vielleicht|", "|Ja|"));
                 adapter.notifyDataSetChanged();
-            }else if (item.contains("|Ja|")) {
+
+            }
+            else if (item.contains("|Ja|")) {
+
                 guestList.set(position, item.replace("|Ja|", "|Nein|"));
                 adapter.notifyDataSetChanged();
-            }else {
+
+            }
+            else {
+
                 guestList.set(position, item + "|Vielleicht|");
                 adapter.notifyDataSetChanged();
-            }
 
+            }
 
         }
 
     }
 
     public void setCounter(int jaSize, int neinSize, int vielleichtSize, int neutralSize){
+
         int size = guestList.size();
 
         infoFree = jaSize;
@@ -341,62 +448,94 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
     }
 
     public void loadItemStatus(){
-        int c = 0;
-        String item;
-        int jaSize = 0;
-        int neinSize = 0;
-        int vielleichtSize = 0;
-        int neutralSize = 0;
+
+        int     c = 0;
+        int     jaSize = 0;
+        int     neinSize = 0;
+        int     vielleichtSize = 0;
+        int     neutralSize = 0;
+
+        String  item;
 
         while (c < guestList.size()) {
+
             item = guestList.get(c);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
                 if (item.contains("|Nein|")) {
+
                     neinSize++;
-                } else if (item.contains("|Vielleicht|")) {
-                    vielleichtSize++;
-                } else if (item.contains("|Ja|")) {
-                    jaSize++;
-                } else {
-                    neutralSize++;
+
                 }
+                else if (item.contains("|Vielleicht|")) {
+
+                    vielleichtSize++;
+
+                }
+                else if (item.contains("|Ja|")) {
+
+                    jaSize++;
+
+                }
+                else {
+
+                    neutralSize++;
+
+                }
+
             }
 
             c++;
+
         }
+
         setCounter(jaSize, neinSize, vielleichtSize, neutralSize);
     }
 
     public void addName(String name){
+
         guestList.add(name);
         adapter.notifyDataSetChanged();
         stream();
+
     }
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_ENTER){
+
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
+
                 if (editET.getText().toString().replace("\n", "").replace(" ", "").length() > 0){
+
                     String text = editET.getText().toString().replace("\n", "").replace("  ", "").replace("|","") + "\n";
                     addName(text);
-                }else {
+
+                }
+                else {
+
                     Toast t = Toast.makeText(getApplicationContext(), getString(R.string.gib_etwas_ein), Toast.LENGTH_LONG);
                     t.show();
+
                 }
+
             }
 
             editET.setText("".replace("\n", ""));
             loadItemStatus();
+
         }
         return false;
     }
 
     @Override
     public void onPause() {
+
         super.onPause();
         stream();
+
     }
+
 }

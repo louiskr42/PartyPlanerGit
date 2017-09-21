@@ -1,7 +1,6 @@
 package com.coreelements.de.partyplaner;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,13 +32,14 @@ import java.util.Locale;
 
 public class Kalender extends AppCompatActivity implements View.OnClickListener {
 
+    private SimpleDateFormat        dateFormatMonth;
+
+    final ActionBar                 actionBar = getSupportActionBar();
+
     CompactCalendarView             calendar;
-    private SimpleDateFormat        dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
     ArrayList<Long>                 blockedEventList;
     ArrayList<Long>                 freeEventList;
-
-    Event                           blockedEvent;
 
     Event                           selectedEvent;
 
@@ -47,7 +47,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     ObjectInputStream               blockedInputStream, freeInputStream;
 
-    File                            eventFile,bfFile;
+    File                            eventFile = new File(getDir("dataEvents", MODE_PRIVATE), "blockedEventList");
+    File                            bfFile = new File(getDir("dataBf", MODE_PRIVATE), "freeEventList");
 
     SharedPreferences               infoCalendar;
     SharedPreferences.Editor        infoCalendarEditor;
@@ -58,12 +59,60 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_kalender_constraint);
 
-        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-        AdView adView = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+            dateFormatMonth = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
+
+        }
+
+        initializeObjects();
+
+        //set an event
+        /*final Event testEvent = new Event(Color.RED, 1503352800000L, "Neues Event");
+        calendar.addEvent(testEvent);
+        blockedEventList.add(testEvent.getTimeInMillis());*/
+
+        calendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
+
+            @Override
+            public void onDayClick(Date dateClicked) {
+
+                selectedEvent = new Event(Color.BLUE, dateClicked.getTime(), "Ausgewähltes Event");
+
+            }
+
+            @Override
+            public void onMonthScroll(Date firstDayOfNewMonth) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+                    if (actionBar != null) {
+
+                        actionBar.setTitle(dateFormatMonth.format(firstDayOfNewMonth));
+
+                    }
+
+                }
+
+            }
+        });
+
+        fillCalendar();
+    }
+
+    public void initializeObjects() {
+
+        initializeAdBanner();
+        defineButtons();
+        defineCalendar();
+        initializeActionBar();
+        defineSharedPreferences();
+        loadFreeEvents();
+        loadBlockedEvents();
+
+    }
+
+    public void defineButtons() {
 
         blockBTN = (Button)findViewById(R.id.blockButton);
         blockBTN.setOnClickListener(this);
@@ -77,90 +126,122 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         clearAllBTN = (Button)findViewById(R.id.clearAllButton);
         clearAllBTN.setOnClickListener(this);
 
-        final ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle(null);
+    }
+
+    public void defineCalendar() {
 
         calendar = (CompactCalendarView)findViewById(R.id.compactcalendar_view);
         calendar.setUseThreeLetterAbbreviation(true);
 
-        eventFile = new File(getDir("dataEvents", MODE_PRIVATE), "blockedEventList");
-        try {
-            blockedInputStream = new ObjectInputStream(new FileInputStream(eventFile));
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    public void initializeAdBanner() {
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
+
+    }
+
+    public void initializeActionBar() {
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setTitle(null);
         }
-        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
 
-        if (blockedInputStream != null) {
-            try {
-                blockedEventList = (ArrayList<Long>) blockedInputStream.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            blockedEventList = new ArrayList<>();
-        }
-        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
+    }
 
-
-        bfFile = new File(getDir("dataBf", MODE_PRIVATE), "freeEventList");
-        try {
-            freeInputStream = new ObjectInputStream(new FileInputStream(bfFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
-
-        if (freeInputStream != null) {
-            try {
-                freeEventList = (ArrayList<Long>) freeInputStream.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            freeEventList = new ArrayList<>();
-        }
-        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
-
-        //set an event
-        /*final Event testEvent = new Event(Color.RED, 1503352800000L, "Neues Event");
-        calendar.addEvent(testEvent);
-        blockedEventList.add(testEvent.getTimeInMillis());*/
+    public void defineSharedPreferences() {
 
         infoCalendar = this.getSharedPreferences("Info", MODE_PRIVATE);
         infoCalendarEditor = infoCalendar.edit();
 
-        calendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-            @Override
-            public void onDayClick(Date dateClicked) {
+    }
 
-                Context context = getApplicationContext();
+    public void loadBlockedEvents(){
 
-                selectedEvent = new Event(Color.BLUE, dateClicked.getTime(), "Ausgewähltes Event");
+        try {
+
+            blockedInputStream = new ObjectInputStream(new FileInputStream(eventFile));
+
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
+
+        if (blockedInputStream != null) {
+
+            try {
+
+                blockedEventList = (ArrayList<Long>) blockedInputStream.readObject();
+
+            }
+            catch (IOException | ClassNotFoundException e) {
+
+                e.printStackTrace();
 
             }
 
-            @Override
-            public void onMonthScroll(Date firstDayOfNewMonth) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    actionBar.setTitle(dateFormatMonth.format(firstDayOfNewMonth));
-                }
-            }
-        });
+        }
+        else {
 
-        fillCalendar();
+            blockedEventList = new ArrayList<>();
+
+        }
+
+    }
+
+    public void loadFreeEvents(){
+
+        try {
+
+            freeInputStream = new ObjectInputStream(new FileInputStream(bfFile));
+
+        }
+        catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
+
+        if (freeInputStream != null) {
+
+            try {
+
+                freeEventList = (ArrayList<Long>) freeInputStream.readObject();
+
+            }
+            catch (IOException | ClassNotFoundException e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
+        else {
+
+            freeEventList = new ArrayList<>();
+
+        }
+
     }
 
     @Override
     public void onBackPressed() {
+
         startActivity(new Intent(getApplicationContext(), MainMenu.class));
         finish();
         //beendet die Activity und geht zurück zum Hauptmenü bei Klick auf die Zurück-Taste
+
     }
 
     @Override
@@ -169,11 +250,15 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         Long time;
 
         if (selectedEvent != null) {
+
             time = selectedEvent.getTimeInMillis();
-        }else{
+
+        }
+        else{
 
             Toast.makeText(getApplicationContext(), R.string.choose_date, Toast.LENGTH_LONG).show();
-            time = 0000000000000L;
+            time = 0L;
+
         }
 
         if (v.getId() == R.id.blockButton){
@@ -188,9 +273,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
             Toast.makeText(getApplicationContext(), getString(R.string.set_blockedEvent), Toast.LENGTH_LONG).show();
 
-
-
-        }else if (v.getId() == R.id.freeButton){
+        }
+        else if (v.getId() == R.id.freeButton){
 
             calendar.getEvents(time).clear();
             blockedEventList.remove(time);
@@ -202,7 +286,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
             Toast.makeText(getApplicationContext(), getString(R.string.set_freeEvent), Toast.LENGTH_LONG).show();
 
-        }else if (v.getId() == R.id.clearButton){
+        }
+        else if (v.getId() == R.id.clearButton){
 
             calendar.getEvents(time).clear();
             blockedEventList.remove(time);
@@ -210,7 +295,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
             Toast.makeText(getApplicationContext(), getString(R.string.cleared_event), Toast.LENGTH_LONG).show();
 
-        }else if (v.getId() == R.id.clearAllButton){
+        }
+        else if (v.getId() == R.id.clearAllButton){
 
             AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
             mainbuilder.setMessage(R.string.alles_aufheben);
@@ -241,29 +327,42 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
     @Override
     public void onPause() {
         super.onPause();
+
         stream();
         //lässt stream laufen, wenn die Activity pausiert oder beendet wird
+
     }
 
     public void stream(){
+
         try {
+
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(eventFile));
             outputStream.writeObject(blockedEventList);
             outputStream.flush();
             outputStream.close();
-        } catch (IOException e) {
+
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
+
         }
 
         try {
+
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(bfFile));
             outputStream.writeObject(freeEventList);
             outputStream.flush();
             outputStream.close();
-        } catch (IOException e) {
+
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
+
         }
 
         int info = freeEventList.size();
@@ -302,4 +401,5 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         }
 
     }
+
 }

@@ -35,12 +35,14 @@ import java.util.ArrayList;
 
 public class ToDosList extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, AdapterView.OnItemClickListener {
 
+    int i = 1;
+
     ListView aufgabenLV;
     EditText aufgabenET;
     TextView aufgabenTV;
     Button btn;
 
-    int i = 1;
+    File file = new File(getDir("dataItems", MODE_PRIVATE), "list");
 
     ArrayList<String> listItems;
     ArrayAdapter<String> aufgabenPersonenAdapter;
@@ -48,8 +50,6 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     SharedPreferences mainPref, subPref, infoTodos;
     SharedPreferences.Editor mainPrefEditor, subPrefEditor, infoTodosEditor;
 
-    File file;
-    //Datei, in der die Liste gespeichert wird
     ObjectInputStream inputStream;
 
     @Override
@@ -57,27 +57,51 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_aufgabenverteilung);
 
-        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+        initializeObjects();
 
-        AdView adView = (AdView)findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
+    }
 
-        btn = (Button) findViewById(R.id.deleteAllButton);
-        btn.setOnClickListener(this);
-        //Button initialisieren
+    public void initializeObjects() {
 
-        aufgabenET = (EditText) findViewById(R.id.aufgabenEditText);
-        aufgabenET.setOnKeyListener(this);
-        //EditText initialisieren und Text einstellen
+        initializeAdBanner();
+        defineButtons();
+        defineTextViews();
+        defineEditTexts();
+        defineListViews();
+        defineSharedPreferences();
+        loadListAndSetAdaptor();
+        stream();
 
-        aufgabenLV = (ListView) findViewById(R.id.aufgabenListView);
-        aufgabenLV.setOnItemClickListener(this);
-        //ListView initialisieren
+    }
 
-        aufgabenTV = (TextView) findViewById(R.id.aufgabenTextView);
-        //TextView initialisieren
+    public void loadListAndSetAdaptor() {
+
+        try {
+            inputStream = new ObjectInputStream(new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
+
+        if (inputStream != null) {
+            try {
+                listItems = (ArrayList<String>) inputStream.readObject();
+            }
+            catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            listItems = new ArrayList<>();
+        }
+        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
+
+        aufgabenPersonenAdapter = new ArrayAdapter<>(this, R.layout.simple_list, listItems);
+
+        aufgabenLV.setAdapter(aufgabenPersonenAdapter);
+
+    }
+
+    public void defineSharedPreferences() {
 
         mainPref = this.getSharedPreferences("Aufgaben", MODE_PRIVATE);
         mainPrefEditor = mainPref.edit();
@@ -90,52 +114,82 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
         //SharedPreferences initialisieren
 
-        file = new File(getDir("dataItems", MODE_PRIVATE), "list");
-        try {
-            inputStream = new ObjectInputStream(new FileInputStream(file));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //ObjectInputstream, zum Abrufen der in file gespeicherten Aufgaben initialisieren
-
-        if (inputStream != null) {
-            try {
-                listItems = (ArrayList<String>) inputStream.readObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            listItems = new ArrayList<>();
-        }
-        //Wenn bereits Aufgaben gespeichert sind, lädt er diese. Wenn nicht erstellt er eine neue Liste
-
-        aufgabenPersonenAdapter = new ArrayAdapter<String>(this, R.layout.simple_list, listItems);
-
-        aufgabenLV.setAdapter(aufgabenPersonenAdapter);
-
-        stream();
     }
 
-    public void sortList(String aufgabe, String person){
+    public void defineListViews() {
+
+        aufgabenLV = (ListView) findViewById(R.id.aufgabenListView);
+        aufgabenLV.setOnItemClickListener(this);
+        //ListView initialisieren
+
+    }
+
+    public void defineEditTexts() {
+
+        aufgabenET = (EditText) findViewById(R.id.aufgabenEditText);
+        aufgabenET.setOnKeyListener(this);
+        //EditText initialisieren und Text einstellen
+
+    }
+
+    public void defineTextViews() {
+
+        aufgabenTV = (TextView) findViewById(R.id.aufgabenTextView);
+        //TextView initialisieren
+
+    }
+
+    public void defineButtons() {
+
+        btn = (Button) findViewById(R.id.deleteAllButton);
+        btn.setOnClickListener(this);
+        //Button initialisieren
+
+    }
+
+    public void initializeAdBanner() {
+
+        MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
+
+        AdView adView = (AdView)findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        adView.loadAd(adRequest);
+
+    }
+
+    public void sortList(String aufgabe, String person) {
+
         if (person.length() > 0) {
+
             listItems.add(aufgabe.replace("\n", "") + "\n" + "(" + person.replace("\n", "") + ")");
-        }else{
-            listItems.add(aufgabe.replace("\n", ""));
+
         }
+        else {
+
+            listItems.add(aufgabe.replace("\n", ""));
+
+        }
+
         aufgabenPersonenAdapter.notifyDataSetChanged();
         aufgabenLV.setAdapter(aufgabenPersonenAdapter);
         aufgabenET.setText(null);
+
     }
 
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
+
         if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
+
                 if (aufgabenET.getText().toString().replace("\n", "").replace(" ", "").length() > 0) {
+
                     if (i == 2) {
+
                         String text = aufgabenET.getText().toString().replace("\n", "").replace("  ", "");
                         subPrefEditor.putString("personen", text);
                         subPrefEditor.commit();
@@ -159,7 +213,9 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
                         i = 1;
                         //setzt i auf 1, damit die nächste Eingabe den Namen zugeordnet wird
 
-                    } else if (i == 1) {
+                    }
+                    else if (i == 1) {
+
                         String text = aufgabenET.getText().toString().replace("\n", "").replace("  ", "");
                         mainPrefEditor.putString("aufgaben", text);
                         mainPrefEditor.commit();
@@ -171,12 +227,17 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
                         i++;
                         //addiert 1 zu i, damit die nächste Eingabe den Details zugeordnet wird
                     }
-                } else {
+                }
+                else {
 
                     if (i == 1) {
+
                         Toast t = Toast.makeText(getApplicationContext(), getString(R.string.gib_etwas_ein), Toast.LENGTH_LONG);
                         t.show();
-                    }else{
+
+                    }
+                    else {
+
                         String text = aufgabenET.getText().toString().replace("\n", "").replace("  ", "");
                         subPrefEditor.putString("personen", text);
                         subPrefEditor.commit();
@@ -209,20 +270,28 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onPause() {
+
         super.onPause();
         stream();
         //lässt stream laufen, wenn die Activity pausiert oder beendet wird
+
     }
 
     public void stream() {
+
         try {
+
             ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file));
             outputStream.writeObject(listItems);
             outputStream.flush();
             outputStream.close();
-        } catch (IOException e) {
+
+        }
+        catch (IOException e) {
+
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.speicher_fehler), Toast.LENGTH_LONG).show();
+
         }
 
         int info = listItems.size();
@@ -234,7 +303,9 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
+
         if (v.getId() == R.id.deleteAllButton) {
+
             AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
             mainbuilder.setMessage(R.string.alles_loeschen);
             mainbuilder.setCancelable(true);
@@ -258,16 +329,16 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
             //erstellt einen Bist du dir sicher? Dialog vor dem Löschen aller Aufgaben
 
-        } else {
-
         }
     }
 
     @Override
     public void onBackPressed() {
+
         startActivity(new Intent(getApplicationContext(), MainMenu.class));
         finish();
         //beendet die Activity und geht zurück zum Hauptmenü bei Klick auf die Zurück-Taste
+
     }
 
     @Override
