@@ -37,7 +37,7 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
 
     final static String         bannerID = "ca-app-pub-1814335808278709~4572376197";
 
-    File                        file = new File(getDir("dataShopping", MODE_PRIVATE), "shoppingList");
+    File                        file;
 
     Button                      deleteAllBTN;
     ListView                    aufgabenLV;
@@ -55,14 +55,16 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_aufgabenverteilung);
+        setContentView(R.layout.layout_todos_constraint);
 
         initializeObjects();
 
     }
 
     public void initializeObjects() {
+
         defineButtons();
+        defineFiles();
         defineEditTexts();
         defineListViews();
         defineTextViews();
@@ -70,6 +72,13 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
         loadListAndSetAdapter();
         initializeAdBanner();
         stream();
+
+    }
+
+    public void defineFiles() {
+
+        file = new File(getDir("dataShopping", MODE_PRIVATE), "shoppingList");
+
     }
 
     public void defineButtons() {
@@ -141,7 +150,7 @@ public class Einkaufsliste extends AppCompatActivity implements View.OnClickList
     public void initializeAdBanner() {
         MobileAds.initialize(this, bannerID);
 
-        AdView adView = (AdView)findViewById(R.id.adView);
+        AdView adView = (AdView)findViewById(R.id.adViewTodos);
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();

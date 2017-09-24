@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="12dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:padding="12dp"
+                xmlns:ads="http://schemas.android.com/apk/res-auto">
 
     <EditText
         android:id="@+id/aufgabenEditText"
@@ -23,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:textColor="@color/colorWhiteTransparent"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:theme="@style/TextStyleAufgabenListViewMain"/>
 
     <Button
@@ -45,5 +47,15 @@
         android:layout_centerHorizontal="true"
         android:text="@string/gib_namen_der_aufgabe"
         android:textColor="@color/colorLightBlue700"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-1814335808278709/1670880681"
+        android:layout_below="@+id/aufgabenListView">
+    </com.google.android.gms.ads.AdView>
+
 </RelativeLayout>

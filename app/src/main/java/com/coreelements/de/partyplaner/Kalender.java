@@ -34,7 +34,7 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     private SimpleDateFormat        dateFormatMonth;
 
-    final ActionBar                 actionBar = getSupportActionBar();
+    ActionBar                       actionBar;
 
     CompactCalendarView             calendar;
 
@@ -47,8 +47,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     ObjectInputStream               blockedInputStream, freeInputStream;
 
-    File                            eventFile = new File(getDir("dataEvents", MODE_PRIVATE), "blockedEventList");
-    File                            bfFile = new File(getDir("dataBf", MODE_PRIVATE), "freeEventList");
+    File                            eventFile;
+    File                            bfFile;
 
     SharedPreferences               infoCalendar;
     SharedPreferences.Editor        infoCalendarEditor;
@@ -102,6 +102,8 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
     public void initializeObjects() {
 
+        defineActionBar();
+        defineFiles();
         initializeAdBanner();
         defineButtons();
         defineCalendar();
@@ -109,6 +111,19 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
         defineSharedPreferences();
         loadFreeEvents();
         loadBlockedEvents();
+
+    }
+
+    public void defineFiles() {
+
+        eventFile = new File(getDir("dataEvents", MODE_PRIVATE), "blockedEventList");
+        bfFile = new File(getDir("dataBf", MODE_PRIVATE), "freeEventList");
+
+    }
+
+    public void defineActionBar() {
+
+        actionBar = getSupportActionBar();
 
     }
 
@@ -139,7 +154,7 @@ public class Kalender extends AppCompatActivity implements View.OnClickListener 
 
         MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
 
-        AdView adView = (AdView)findViewById(R.id.adView);
+        AdView adView = (AdView)findViewById(R.id.adViewCalendar);
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();

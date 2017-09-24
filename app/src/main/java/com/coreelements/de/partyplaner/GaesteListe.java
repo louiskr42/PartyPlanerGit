@@ -50,7 +50,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
     ArrayList<String>           guestList;
     ArrayAdapter<String>        adapter;
 
-    File                        file = new File(getDir("dataGaeste", MODE_PRIVATE), "gaesteListe");
+    File                        file;
 
     ObjectInputStream           inputStream;
 
@@ -73,11 +73,18 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
     public void initializeObjects() {
 
         defineSharedPreferences();
+        defineFiles();
         defineTextViews();
         defineListViews();
         defineEditTexts();
         defineButtons();
         initializeAdBanner();
+
+    }
+
+    public void defineFiles() {
+
+        file = new File(getDir("dataGaeste", MODE_PRIVATE), "gaesteListe");
 
     }
 
@@ -131,7 +138,7 @@ public class GaesteListe extends AppCompatActivity implements View.OnClickListen
 
         MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
 
-        AdView adView = (AdView)findViewById(R.id.adView);
+        AdView adView = (AdView)findViewById(R.id.adViewGuestlist);
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();

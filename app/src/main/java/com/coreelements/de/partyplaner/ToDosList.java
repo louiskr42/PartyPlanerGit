@@ -42,7 +42,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     TextView aufgabenTV;
     Button btn;
 
-    File file = new File(getDir("dataItems", MODE_PRIVATE), "list");
+    File file;
 
     ArrayList<String> listItems;
     ArrayAdapter<String> aufgabenPersonenAdapter;
@@ -55,7 +55,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_aufgabenverteilung);
+        setContentView(R.layout.layout_todos_constraint);
 
         initializeObjects();
 
@@ -64,6 +64,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     public void initializeObjects() {
 
         initializeAdBanner();
+        defineFiles();
         defineButtons();
         defineTextViews();
         defineEditTexts();
@@ -71,6 +72,12 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
         defineSharedPreferences();
         loadListAndSetAdaptor();
         stream();
+
+    }
+
+    public void defineFiles() {
+
+        file = new File(getDir("dataItems", MODE_PRIVATE), "list");
 
     }
 
@@ -151,7 +158,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
         MobileAds.initialize(this, "ca-app-pub-1814335808278709~4572376197");
 
-        AdView adView = (AdView)findViewById(R.id.adView);
+        AdView adView = (AdView)findViewById(R.id.adViewTodos);
         AdRequest adRequest = new AdRequest.Builder()
                 //.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();

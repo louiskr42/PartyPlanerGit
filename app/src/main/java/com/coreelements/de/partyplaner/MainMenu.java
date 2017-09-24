@@ -56,19 +56,22 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_menu_new_test);
-
-        initializeAdBanner();
+        setContentView(R.layout.main_menu_final);
 
         ButterKnife.bind(this);
 
+        initializeObjects();
+
+    }
+
+    public void initializeObjects() {
+
+        initializeAdBanner();
         defineObjects();
-
         setColorFilterImageViews();
-
         setColorFilterInfoTextViews();
-
         getInfos();
+
     }
 
     public void defineObjects() {
@@ -179,6 +182,7 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
         return false;
     }
 
+
     public void launchActivity(View v) {
 
         if (v.getId() == R.id.todo_menu_layout) {
@@ -203,7 +207,7 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
 
         getInfos();
 
-    }
+}
 
     private void setItemsToNormal() {
         int mainColor = themeWhite;
