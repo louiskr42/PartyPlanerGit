@@ -349,32 +349,38 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+    public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
 
-        AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
-        mainbuilder.setMessage(R.string.willst_du_aufgabe_loeschen);
-        mainbuilder.setCancelable(true);
+        //if (aufgabenLV.getAdapter().equals(aufgabenPersonenAdapter)) {
 
-        mainbuilder.setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                listItems.remove(position);
-                aufgabenPersonenAdapter.notifyDataSetChanged();
-                //entfernt das angelickte Item und aktualiesiert den Adapter und die ListView
-            }
-        });
+            AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
+            mainbuilder.setMessage(R.string.willst_du_aufgabe_loeschen);
+            mainbuilder.setCancelable(true);
 
-        mainbuilder.setNegativeButton(R.string.nein, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+            mainbuilder.setPositiveButton(R.string.ja, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
 
-        AlertDialog maindialog = mainbuilder.create();
-        maindialog.show();
+                    listItems.remove(position);
+                    aufgabenPersonenAdapter.notifyDataSetChanged();
+                    //entfernt das angelickte Item und aktualiesiert den Adapter und die ListView
+                }
+            });
 
-        stream();
+            mainbuilder.setNegativeButton(R.string.nein, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            AlertDialog maindialog = mainbuilder.create();
+            maindialog.show();
+
+            stream();
+
+        //}
+
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu){
 
         MenuInflater inflater = getMenuInflater();
@@ -408,6 +414,6 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
         });
 
         return super.onCreateOptionsMenu(menu);
-    }
+    }*/
 
 }
