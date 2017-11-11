@@ -4,14 +4,9 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -70,7 +65,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
         defineEditTexts();
         defineListViews();
         defineSharedPreferences();
-        loadListAndSetAdaptor();
+        loadListAndSetAdapter();
         stream();
 
     }
@@ -81,7 +76,7 @@ public class ToDosList extends AppCompatActivity implements View.OnClickListener
 
     }
 
-    public void loadListAndSetAdaptor() {
+    public void loadListAndSetAdapter() {
 
         try {
             inputStream = new ObjectInputStream(new FileInputStream(file));

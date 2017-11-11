@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,8 @@ import com.google.android.gms.ads.MobileAds;
 
 public class MainMenu extends AppCompatActivity implements View.OnTouchListener {
 
-    SharedPreferences infoTodos, infoCalendar, infoShopping, infoGuestlistFree, infoGuestlistTotal;
+    SharedPreferences infoTodos, infoCalendar, infoShopping, infoGuestlistFree, infoGuestlistTotal, launchCounter;
+    SharedPreferences.Editor launchCounterEditor;
 
     @BindView(R.id.todo_menu_layout) RelativeLayout todoRl;
     @BindView(R.id.guestlist_menu_layout) RelativeLayout guestlistRl;
@@ -48,6 +50,8 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
 
     @BindView(R.id.menuScrollView) ScrollView scrollView;
 
+    int counter;
+
     int themeGreyHighkight = R.color.colorGreyHighlightMain;
     int themeAccent = R.color.colorLightBlue700;
     int themeWhite = R.color.colorWhite;
@@ -61,6 +65,77 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
         ButterKnife.bind(this);
 
         initializeObjects();
+
+        countLaunch();
+
+    }
+
+    public void countLaunch() {
+
+        counter = launchCounter.getInt("launchCount", 0);
+
+        if (counter == 999) {
+
+        }
+        else if (counter != 0) {
+
+            if (counter == 4) {
+
+                launchCounterEditor.putInt("launchCount", 0);
+                launchCounterEditor.commit();
+
+            }
+            else if (counter > 4) {
+
+                launchCounterEditor.putInt("launchCount", 0);
+                launchCounterEditor.commit();
+
+            }
+            else {
+
+                counter++;
+
+                launchCounterEditor.putInt("launchCount", counter);
+                launchCounterEditor.commit();
+            }
+
+        }
+        else {
+
+            AlertDialog.Builder mainbuilder = new AlertDialog.Builder(this);
+            mainbuilder.setMessage(R.string.wanna_rate);
+            mainbuilder.setCancelable(true);
+
+            mainbuilder.setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
+                    String url = "https://play.google.com/store/apps/details?id=com.coreelements.de.partyplaner&hl=de";
+
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse(url));
+
+                    startActivity(intent);
+
+                    launchCounterEditor.putInt("launchCount", 999);
+                    launchCounterEditor.commit();
+                }
+            });
+
+            mainbuilder.setNegativeButton(R.string.nein, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            AlertDialog maindialog = mainbuilder.create();
+            maindialog.show();
+
+            counter++;
+
+            launchCounterEditor.putInt("launchCount", counter);
+            launchCounterEditor.commit();
+
+        }
 
     }
 
@@ -87,6 +162,9 @@ public class MainMenu extends AppCompatActivity implements View.OnTouchListener 
         infoShopping = this.getSharedPreferences("Info", MODE_PRIVATE);
         infoGuestlistFree = this.getSharedPreferences("Info", MODE_PRIVATE);
         infoGuestlistTotal = this.getSharedPreferences("Info", MODE_PRIVATE);
+
+        launchCounter = this.getSharedPreferences("LaunchCounter", MODE_PRIVATE);
+        launchCounterEditor = launchCounter.edit();
     }
 
     public void initializeAdBanner() {

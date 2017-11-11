@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Party Planer</string>
+    <string name="app_name">Party Planner</string>
     <string name="aufgaben">To Do\'s</string>
     <string name="gaesteliste">Gästeliste</string>
     <string name="aufgaben_loeschen">Alle Aufgaben löschen</string>
@@ -49,5 +49,10 @@
     <string name="no_items_on_shoppinglist">Keine Artikel auf der Einkaufsliste</string>
     <string name="no_guests_on_guestlist">Noch keine Gäste auf der Liste</string>
     <string name="somany_guests"></string>
+    <string name="okay">Okay</string>
+    <string name="wanna_rate">Hey, wir wissen, dass jeder diesen Dialog hasst. :D Die App ist allerdings noch in der Testphase
+                                und deshalb ist uns Feedback besonders wichtig. Also wenn du irgendetwas zu sagen hast, einfach eine
+                                Rezension auf Google Play schreiben und vielleicht können wir es mit dem nächsten Update umsetzen.\nVielen Dank!
+                                \n- Dein Core Elements Team</string>
 
 </resources>
